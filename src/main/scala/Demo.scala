@@ -7,7 +7,7 @@ import scala.concurrent.duration._
 import scala.collection.mutable
 
 object Demo extends App {
-  implicit def arrayDequeRefTree: ToRefTree[mutable.ArrayDeque[Char]] = ToRefTree {ds =>
+  implicit def `ArrayDeque RefTree`: ToRefTree[mutable.ArrayDeque[Char]] = ToRefTree {ds =>
     val array = ds.privateField[Array[AnyRef]]("array")
     RefTree.Ref(ds, Seq(
       ds.privateField[Int]("start").refTree.withHighlight(true).toField.withName("start"),
@@ -19,24 +19,38 @@ object Demo extends App {
   }
 
   val queue = mutable.ArrayDeque.empty[Char]
+  var chars = Iterator.from('a').map(_.toChar)
 
-  def append(c: Char) = Diagram(queue += c).withCaption(s"queue += '$c'")
+  def append() = {
+    val c = chars.next()
+    Diagram(queue += c).withCaption(s"queue += '$c'")
+  }
 
   def removeHead() = {
     val str = queue.removeHeadOption().map(c => s"'$c'")
     Diagram(queue).withCaption(s"queue.removeHeadOption()) //$str")
   }
 
+  def removeLast() = {
+    val str = queue.removeLastOption().map(c => s"'$c'")
+    Diagram(queue).withCaption(s"queue.removeLastOption()) //$str")
+  }
+
   val diagrams = Seq(
     Diagram(queue).withCaption("val queue = mutable.ArrayDeque.empty[Char]"),
-    append('a'),
-    append('b'),
-    append('c'),
-    append('d'),
-    append('e'),
+    append(),
+    append(),
+    append(),
+    append(),
+    append(),
     removeHead(),
     removeHead(),
-    removeHead()
+    removeHead(),
+    append(),
+    append(),
+    removeLast(),
+    removeLast(),
+    removeLast(),
   )
 
   // Render
