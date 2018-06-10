@@ -30,7 +30,7 @@ object Demo extends App {
       end.refTree.withHighlight(true).toField.withName("end"),
       arrayRef.toField.withName("array"),
       RefTree.Val(ds.size).toField.withName(s"size = (end - start) mod ${array.length}")
-    ))
+    )).rename(queue.map(c => s"'$c'").toString()) //TODO: Move to separate diagram
   }
 
   val queue = mutable.ArrayDeque.empty[Char]
