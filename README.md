@@ -1,9 +1,9 @@
-Source for the `ArrayDeque` talk
+ArrayDeque
+----------
+
+![Alt Text](ArrayDeque.gif)
 
 To run the code:
 ```shell
 sbt "~runMain Demo"
 ```
-
-It will generate the following image:
-![Alt Text](ArrayDeque.gif)
