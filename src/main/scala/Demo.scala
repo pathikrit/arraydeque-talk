@@ -39,27 +39,26 @@ object Demo extends App {
   }
 
   val queue = mutable.ArrayDeque.empty[Char]
-  var chars = Iterator.from('a').map(_.toChar)
+  var chars = Iterator.continually('A' to 'Z').flatten //Cycle A -> Z
 
   def append(n: Int) = Seq.fill(n) {
     val c = chars.next()
-    Diagram(queue += c).withCaption(s"queue += '$c'")
+    Diagram(queue += c).withCaption(s"queue.append('$c')")
   }
 
   def prepend(n: Int) = Seq.fill(n) {
     val c = chars.next()
-    queue.prepend(c)
-    Diagram(queue).withCaption(s"queue.prepend('$c')")
+    Diagram(c +=: queue).withCaption(s"queue.prepend('$c')")
   }
 
   def removeHead(n: Int) = Seq.fill(n) {
-    val str = queue.removeHeadOption().map(c => s"'$c'")
-    Diagram(queue).withCaption(s"queue.removeHeadOption()) //$str")
+    val str = queue.removeHeadOption()
+    Diagram(queue).withCaption(s"queue.removeHeadOption()) //${str.map(c => s"'$c'")}")
   }
 
   def removeLast(n: Int) = Seq.fill(n) {
-    val str = queue.removeLastOption().map(c => s"'$c'")
-    Diagram(queue).withCaption(s"queue.removeLastOption()) //$str")
+    val str = queue.removeLastOption()
+    Diagram(queue).withCaption(s"queue.removeLastOption()) //${str.map(c => s"'$c'")}")
   }
 
   def clear(shrink: Boolean) = {
