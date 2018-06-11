@@ -8,19 +8,23 @@ import scala.collection.mutable
 
 object Demo extends App {
   implicit def `ArrayDeque RefTree`: ToRefTree[mutable.ArrayDeque[Char]] = ToRefTree {ds =>
-    val array = ds.privateField[Array[AnyRef]]("array").map(c => Option(c).getOrElse('␀').asInstanceOf[Char])
+    val array = ds.privateField[Array[AnyRef]]("array")
     val start = ds.privateField[Int]("start")
     val end = ds.privateField[Int]("end")
 
     val arrayRef = {
       val arrayFields = array.zipWithIndex map { case (a, i) =>
-        val name = i match {
-          case `start` if start == end => s"start=end=$i"
-          case `start` => s"start=$i"
-          case `end` => s"end=$i"
+        val fieldName = i match {
+          case `start` if start == end => s"↳$i↲"
+          case `start` => s"↳$i"
+          case `end` => s"$i↲"
           case _ => i.toString
         }
-        a.refTree.withHighlight(i == start || i == end).toField.withName(name)
+        val refTree = Option(a) match {
+          case Some(c) => RefTree.Val(c.asInstanceOf[Char]).withHighlight(true)
+          case None => RefTree.Null()
+        }
+        refTree.toField.withName(fieldName)
       }
       RefTree.Ref(array, arrayFields).rename(s"char[${array.length}]")
     }
