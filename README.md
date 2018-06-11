@@ -65,3 +65,8 @@ Preliminary benchmarks prove that this data structure can suitably replace `muta
   ArrayDeque:    48.34 ms
  ArrayBuffer:    28.62 ms
 ```
+
+To run benchmarks:
+```shell
+sbt "test/runMain scala.collection.mutable.ArrayDequeBenchmark"
+```
