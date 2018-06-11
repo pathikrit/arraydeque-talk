@@ -419,9 +419,9 @@ class ArrayDeque[A] private[ArrayDeque](
     * @param maxItems
     */
   def copySliceToArray(srcStart: Int, dest: Array[_], destStart: Int, maxItems: Int): dest.type = {
+    requireBounds(destStart, until = dest.length + 1)
     val toCopy = Math.min(maxItems, Math.min(length - srcStart, dest.length - destStart))
     if (toCopy > 0) {
-      requireBounds(destStart, 0, dest.length)
       requireBounds(srcStart)
       val startIdx = start_+(srcStart)
       val block1 = Math.min(toCopy, array.length - startIdx)
@@ -458,7 +458,7 @@ class ArrayDeque[A] private[ArrayDeque](
     reset(array = array2, start = 0, end = n)
   }
 
-  @inline private[this] def requireBounds(idx: Int, from: Int = 0, until: Int = length) =
+  @inline private[this] def requireBounds(idx: Int, until: Int = length) =
     if (idx < 0 || until <= idx) throw new IndexOutOfBoundsException(idx.toString)
 }
 

@@ -5,9 +5,10 @@ import reftree.util.Reflection._
 
 import scala.concurrent.duration._
 import scala.collection.mutable
+import scala.reflect.ClassTag
 
 object Demo extends App {
-  implicit def `ArrayDeque RefTree`: ToRefTree[mutable.ArrayDeque[Char]] = ToRefTree {ds =>
+  implicit def `ArrayDeque RefTree`[A <: AnyVal : ClassTag]: ToRefTree[mutable.ArrayDeque[A]] = ToRefTree {ds =>
     val array = ds.privateField[Array[AnyRef]]("array")
     val start = ds.privateField[Int]("start")
     val end = ds.privateField[Int]("end")
@@ -21,12 +22,13 @@ object Demo extends App {
           case _ => i.toString
         }
         val refTree = Option(a) match {
-          case Some(c) => RefTree.Val(c.asInstanceOf[Char]).withHighlight(true)
-          case None => RefTree.Null()
+          case Some(c) => RefTree.Val(c.asInstanceOf[A]).withHighlight(true)
+          case None => RefTree.Null().withHighlight(i == end)
         }
         refTree.toField.withName(fieldName)
       }
-      RefTree.Ref(array, arrayFields).rename(s"char[${array.length}]")
+      val name = s"${implicitly[ClassTag[A]].runtimeClass.getName}[${array.length}]"
+      RefTree.Ref(array, arrayFields).rename(name)
     }
 
     RefTree.Ref(ds, Seq(
@@ -69,11 +71,13 @@ object Demo extends App {
     Seq(Diagram(queue).withCaption("val queue = mutable.ArrayDeque.empty[Char]")),
     append(5),
     removeHead(3),
-    append(2),
+    prepend(2),
+    append(4),
     removeLast(4),
     append(10),
     removeHead(3),
     prepend(5),
+    append(5),
     Seq(clear(shrink = false), clear(shrink = true))
   ).flatten
 
