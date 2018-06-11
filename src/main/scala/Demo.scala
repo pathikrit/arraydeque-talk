@@ -28,9 +28,8 @@ object Demo extends App {
     RefTree.Ref(ds, Seq(
       start.refTree.withHighlight(true).toField.withName("start"),
       end.refTree.withHighlight(true).toField.withName("end"),
-      arrayRef.toField.withName("array"),
-      RefTree.Val(ds.size).toField.withName(s"size = (end - start) mod ${array.length}")
-    )).rename(queue.map(c => s"'$c'").toString()) //TODO: Move to separate diagram
+      arrayRef.toField.withName("array")
+    ) ++ ds.toArray.zipWithIndex.map({case (a, i) => a.refTree.toField.withName(i.toString)}))
   }
 
   val queue = mutable.ArrayDeque.empty[Char]
@@ -39,6 +38,12 @@ object Demo extends App {
   def append(n: Int) = Seq.fill(n) {
     val c = chars.next()
     Diagram(queue += c).withCaption(s"queue += '$c'")
+  }
+
+  def prepend(n: Int) = Seq.fill(n) {
+    val c = chars.next()
+    queue.prepend(c)
+    Diagram(queue).withCaption(s"queue.prepend('$c')")
   }
 
   def removeHead(n: Int) = Seq.fill(n) {
@@ -51,6 +56,11 @@ object Demo extends App {
     Diagram(queue).withCaption(s"queue.removeLastOption()) //$str")
   }
 
+  def clear(shrink: Boolean) = {
+    if (shrink) queue.clearAndShrink() else queue.clear()
+    Diagram(queue).withCaption(if (shrink) "queue.clearAndShrink()" else "queue.clear()")
+  }
+
   val diagrams = Seq(
     Seq(Diagram(queue).withCaption("val queue = mutable.ArrayDeque.empty[Char]")),
     append(5),
@@ -58,6 +68,9 @@ object Demo extends App {
     append(2),
     removeLast(4),
     append(10),
+    removeHead(3),
+    prepend(5),
+    Seq(clear(shrink = false), clear(shrink = true))
   ).flatten
 
   // Render
