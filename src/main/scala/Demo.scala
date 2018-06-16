@@ -69,10 +69,11 @@ object Demo extends App {
   val diagrams = Seq(
     Seq(Diagram(queue).withCaption("val queue = mutable.ArrayDeque.empty[Char]")),
     append(5),
-    removeHead(3),
-    prepend(2),
+    removeHead(4),
+    prepend(1),
     append(4),
     removeLast(4),
+    removeHead(4),
     append(10),
     removeHead(3),
     prepend(5),
